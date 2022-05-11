@@ -1,0 +1,82 @@
+openapi: 3.0.0
+paths:
+  /user-repositories:
+    get:
+      operationId: UserRepositoriesController_getUserRepos
+      summary: Get user repositories
+      parameters:
+        - name: username
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Returns user repositories info
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserRepositoryOutput"
+        "404":
+          description: User not found / Repository not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GeneratedErrorDto"
+        "406":
+          description: "Accept header not equal: 'application/json'"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GeneratedErrorDto"
+      tags:
+        - userRepositories
+info:
+  title: Tui test
+  description: Open API
+  version: "1.0"
+  contact: {}
+tags: []
+servers: []
+components:
+  schemas:
+    UserRepositoryOutput:
+      type: object
+      properties:
+        name:
+          type: string
+          example: tui_test
+          description: Repository name
+        username:
+          type: string
+          example: nekch
+          description: Repository owner username
+        branches:
+          type: array
+          description: Array of repository branches
+          items:
+            type: object
+            properties:
+              name:
+                example: master
+                type: string
+              commit:
+                example: sha
+                type: string
+      required:
+        - name
+        - username
+        - branches
+    GeneratedErrorDto:
+      type: object
+      properties:
+        status:
+          type: number
+          example: 400
+        message:
+          type: string
+      required:
+        - status
+        - message
