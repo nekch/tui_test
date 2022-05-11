@@ -1,0 +1,14 @@
+version: "3.7"
+
+services:
+  tui_api:
+    build: .
+    container_name: tui_test
+    environment:
+      NODE_ENV: development
+      GIT_HUB_API_KEY: ''
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src:/home/node/tui_test/src
+      - ./node_modules:/home/node/tui_test/node_modules
