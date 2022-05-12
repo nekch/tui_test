@@ -38,4 +38,3 @@ export class UserRepositoriesController {
     return this.tasksService.getUserRepos(userInput);
   }
 }
-

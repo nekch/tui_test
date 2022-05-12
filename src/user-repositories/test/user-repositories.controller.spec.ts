@@ -26,7 +26,7 @@ describe('TasksController', () => {
     }).compile();
 
     controller = module.get<UserRepositoriesController>(UserRepositoriesController);
-    octokitModule = module.get<OctokitModule>(OctokitModule)
+    octokitModule = module.get<OctokitModule>(OctokitModule);
   });
 
   it('should return user repositories info', async () => {

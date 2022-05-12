@@ -26,15 +26,21 @@ export class UserRepositoriesService {
     const { username } = userInput;
 
     try {
-      await this.octokitService.octokit.users.getContextForUser({ username });
+      await this.octokitService.octokit.users.getByUsername({ username });
     } catch (err) {
-      GenerateError(ResponseMessages.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+      throw GenerateError({
+        message: ResponseMessages.USER_NOT_FOUND,
+        status:HttpStatus.NOT_FOUND
+      });
     }
 
     const repositories: GetReposOutput[] = await this.getRepos(username);
 
     if (!repositories.length) {
-      GenerateError(ResponseMessages.REPOSITORIES_NOT_FOUND, HttpStatus.NOT_FOUND);
+      throw GenerateError({
+        message: ResponseMessages.REPOSITORIES_NOT_FOUND,
+        status: HttpStatus.NOT_FOUND
+      });
     }
 
     const branchesPromises = [];

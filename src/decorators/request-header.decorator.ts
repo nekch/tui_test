@@ -15,7 +15,10 @@ export const RequestHeaders = createParamDecorator(
 
       return dto;
     } catch (err) {
-      return GenerateError(ResponseMessages.INCORRECT_HEADER, HttpStatus.NOT_ACCEPTABLE);
+      throw GenerateError({
+        message: ResponseMessages.INCORRECT_HEADER,
+        status: HttpStatus.NOT_ACCEPTABLE
+      });
     }
   }
 );
