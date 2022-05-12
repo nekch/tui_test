@@ -28,7 +28,7 @@ export class UserRepositoriesController {
     type: GeneratedErrorDto
   })
   @ApiNotAcceptableResponse({
-    description: `Accept header not equal: 'application/json'`,
+    description: 'Accept header not equal: \'application/json\'',
     type: GeneratedErrorDto
   })
   getUserRepos(

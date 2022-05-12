@@ -12,9 +12,9 @@ describe('TasksController', () => {
   let controller: UserRepositoriesController;
   let octokitModule: OctokitModule;
 
-  let accept = 'application/json';
+  const accept = 'application/json';
   let username = 'nekch';
-  let page = 1;
+  const page = 1;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({

@@ -14,4 +14,4 @@ export const swaggerDocument = (app: INestApplication): OpenAPIObject => {
   fs.writeFileSync( 'swagger-spec.yml', yaml.stringify(document, {}));
 
   return document;
-}
+};

@@ -1,8 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { UserRepositoryOutput } from './dto/outputs';
+import { UserRepositoryOutput, GetReposOutput } from './dto/outputs';
 import { GetUserReposInput } from './dto/inputs';
 import { OctokitModule } from './octokit.module';
-import { GetReposOutput } from './dto/outputs';
 import { GenerateError } from '../shared/helpers';
 import { ResponseMessages, Main } from '../constants';
 
