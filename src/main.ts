@@ -1,9 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { SwaggerModule } from '@nestjs/swagger';
-import { swaggerDocument } from './shared/helpers';
 import { ErrorsInterceptor } from './shared/interceptors/errors.interceptor';
+import { swaggerSetup } from './shared/helpers';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { logger: ['error', 'log'] });
@@ -13,8 +12,7 @@ async function bootstrap() {
     validateCustomDecorators: true
   }));
   app.useGlobalInterceptors(new ErrorsInterceptor());
-
-  SwaggerModule.setup('api', app, swaggerDocument(app));
+  swaggerSetup(app);
 
   await app.listen(3000);
 }

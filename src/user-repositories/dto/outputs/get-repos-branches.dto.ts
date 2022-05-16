@@ -6,5 +6,6 @@ interface FilteredRepos {
 
 export class GetReposBranchesOutput {
   filteredRepos: FilteredRepos[];
+
   branches: Branch[][];
 }

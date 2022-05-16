@@ -1,2 +1,2 @@
 export * from './generate-error';
-export * from './swagger-document-generator';
+export * from './swagger-setup';
