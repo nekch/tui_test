@@ -1,9 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-
-interface Branch {
-  name: string;
-  commit: string;
-}
+import { Branch } from './branch.dto';
 
 export class UserRepositoryOutput {
   @ApiProperty({ example: 'tui_test', description: 'Repository name' })
