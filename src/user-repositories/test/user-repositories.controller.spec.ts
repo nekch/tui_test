@@ -4,17 +4,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserRepositoriesController } from '../user-repositories.controller';
 import { UserRepositoriesService } from '../user-repositories.service';
 import { OctokitModule } from '../octokit.module';
-import { ResponseMessages, Main } from '../../constants';
+import { Mocks, ResponseMessages } from '../../constants';
 import { HttpStatus } from '@nestjs/common';
 import { UserRepositoryOutput } from '../dto/outputs';
+import { UserRepositoriesInfo } from './mocks';
 
 describe('TasksController', () => {
   let controller: UserRepositoriesController;
   let octokitModule: OctokitModule;
-
-  const accept = 'application/json';
-  let username = 'nekch';
-  const page = 1;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -29,24 +26,29 @@ describe('TasksController', () => {
     octokitModule = module.get<OctokitModule>(OctokitModule);
   });
 
-  it('should return user repositories info', async () => {
-    const { data } = await octokitModule.octokit.rest.repos.listForUser({ username, per_page: Main.PER_PAGE, page });
+  describe('getUserRepos', () => {
+    it('should return user repositories info', async () => {
+    const result: UserRepositoryOutput[] = await controller.getUserRepos(
+      { username: Mocks.USERNAME },
+      { accept: Mocks.ACCEPT_HEADER }
+    );
 
-    const result: UserRepositoryOutput[] = await controller.getUserRepos({ username }, { accept });
+      expect(result[0].name).toEqual(UserRepositoriesInfo[0].name);
+      expect(result[0].username).toEqual(UserRepositoriesInfo[0].username);
+      expect(result[0].branches).toHaveLength(1);
+    });
 
-    expect(result).toHaveLength(data.length);
-    expect(result[0].name).toEqual(data[0].name);
-    expect(result[0].username).toEqual(data[0].owner.login);
-    expect(result[0].branches).toHaveLength(1);
-  });
+    it('should throw error due to username is invalid', async () => {
+      const username = faker.random.alpha(10);
 
-  it('should throw error due to username is invalid', async () => {
-    username = faker.random.alpha(10);
+      const result: Promise<UserRepositoryOutput[]> = controller.getUserRepos(
+        { username },
+        { accept: Mocks.ACCEPT_HEADER }
+      );
 
-    const result: Promise<UserRepositoryOutput[]> = controller.getUserRepos({ username }, { accept });
-
-    await expect(result).rejects.toThrow(Error);
-    await expect(result).rejects.toThrow(ResponseMessages.USER_NOT_FOUND);
-    await expect(result).rejects.toMatchObject({ status: HttpStatus.NOT_FOUND });
+      await expect(result).rejects.toThrow(Error);
+      await expect(result).rejects.toThrow(ResponseMessages.USER_NOT_FOUND);
+      await expect(result).rejects.toMatchObject({ status: HttpStatus.NOT_FOUND });
+    });
   });
 });

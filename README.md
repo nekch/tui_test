@@ -31,4 +31,7 @@ Run commands from step above.
 ```bash
 # unit tests
 $ npm run test
+
+# e2e tests
+$ npm run test:e2e
 ```
