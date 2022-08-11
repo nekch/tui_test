@@ -1,9 +1,10 @@
 import { INestApplication } from '@nestjs/common';
 import swaggerUi = require('swagger-ui-express');
-import YAML = require('yamljs');
+import * as yaml from 'js-yaml';
+import * as fs from 'fs';
 
 export const swaggerSetup = (app: INestApplication) => app.use(
   '/api-docs',
   swaggerUi.serve,
-  swaggerUi.setup(YAML.load('./swagger-spec.yml'))
+  swaggerUi.setup(yaml.load(fs.readFileSync('./swagger-spec.yml', 'utf8')))
 );

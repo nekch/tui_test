@@ -15,7 +15,7 @@ export class UserRepositoriesService {
     } catch (err) {
       throw GenerateError({
         message: ResponseMessages.USER_NOT_FOUND,
-        status:HttpStatus.NOT_FOUND
+        status: HttpStatus.NOT_FOUND
       });
     }
   }
@@ -37,7 +37,7 @@ export class UserRepositoriesService {
 
     const filteredRepos = repositories.map((repo) => {
       if (repo.fork) {
-        return;
+        return null;
       }
 
       const branchPromise = this.octokitService.octokit.rest.repos.listBranches({
