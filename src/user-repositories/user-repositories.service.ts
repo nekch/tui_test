@@ -3,11 +3,27 @@ import { UserRepositoryOutput, GetReposOutput, GetReposBranchesOutput } from './
 import { GetUserReposInput } from './dto/inputs';
 import { OctokitModule } from './octokit.module';
 import { GenerateError } from '../shared/helpers';
-import { ResponseMessages, Main } from '../constants';
+import { ResponseMessages, UserRepositories } from '../constants';
 
 @Injectable()
 export class UserRepositoriesService {
   constructor(private octokitService: OctokitModule) {}
+
+  async getUserRepos(userInput: GetUserReposInput): Promise<UserRepositoryOutput[]> {
+    const { username } = userInput;
+
+    await this.checkUser(username);
+
+    const repositories: GetReposOutput[] = await this.getRepos(username);
+
+    const { filteredRepos, branches } = await this.getReposBranches(repositories, username);
+
+    const result = filteredRepos.map((repo, index) =>
+      ({ name: repo.name, username, branches: branches[index] })
+    );
+
+    return result;
+  }
 
   private async checkUser(username: string): Promise<void> {
     try {
@@ -21,12 +37,19 @@ export class UserRepositoriesService {
   }
 
   private async getRepos(username: string, repositories = [], page = 1): Promise<GetReposOutput[]> {
-    const { data } = await this.octokitService.octokit.rest.repos.listForUser({ username, per_page: Main.PER_PAGE, page });
-    page++;
+    const { data } = await this.octokitService.octokit.rest.repos.listForUser({ username, per_page: UserRepositories.PER_PAGE, page });
     repositories.push(...data);
 
-    if (data.length === Main.PER_PAGE) {
+    if (data.length === UserRepositories.PER_PAGE) {
+      page++;
       return this.getRepos(username, repositories, page);
+    }
+
+    if (!repositories.length) {
+      throw GenerateError({
+        message: ResponseMessages.REPOSITORIES_NOT_FOUND,
+        status: HttpStatus.NOT_FOUND
+      });
     }
 
     return repositories;
@@ -59,28 +82,5 @@ export class UserRepositoriesService {
     });
 
     return { filteredRepos, branches };
-  }
-
-  async getUserRepos(userInput: GetUserReposInput): Promise<UserRepositoryOutput[]> {
-    const { username } = userInput;
-
-    await this.checkUser(username);
-
-    const repositories: GetReposOutput[] = await this.getRepos(username);
-
-    if (!repositories.length) {
-      throw GenerateError({
-        message: ResponseMessages.REPOSITORIES_NOT_FOUND,
-        status: HttpStatus.NOT_FOUND
-      });
-    }
-
-    const { filteredRepos, branches } = await this.getReposBranches(repositories, username);
-
-    const result = filteredRepos.map((repo, index) =>
-      ({ name: repo.name, username, branches: branches[index] })
-    );
-
-    return result;
   }
 }

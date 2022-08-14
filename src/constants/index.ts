@@ -1,3 +1,3 @@
-export * from './main';
 export * from './mocks';
+export * from './userRepositories';
 export * from './responseMessages';

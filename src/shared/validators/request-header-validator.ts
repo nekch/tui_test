@@ -1,8 +1,8 @@
 import { createParamDecorator, ExecutionContext, HttpStatus } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { validateOrReject } from 'class-validator';
-import { GenerateError } from '../shared/helpers';
-import { ResponseMessages } from '../constants';
+import { GenerateError } from '../helpers';
+import { ResponseMessages } from '../../constants';
 
 export const RequestHeaders = createParamDecorator(
   async (value:  any, ctx: ExecutionContext) => {
