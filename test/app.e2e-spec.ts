@@ -9,26 +9,25 @@ import { UserRepositories, Mocks, ResponseMessages } from '../src/constants';
 import { UserRepositoriesInfo } from '../src/user-repositories/test/mocks';
 
 describe('e2e', () => {
-  const incorrectHeader = 'text/plain';
   let app: INestApplication;
+
+  const incorrectHeader = 'text/plain';
+  const repoName = UserRepositoriesInfo[0].name;
+  const { name: branchName, commitSha: sha } = UserRepositoriesInfo[0].branches[0];
+
+  nock(Mocks.GIT_BASE_URL)
+    .get('/users/nekch')
+    .reply(200, { body: UserRepositoriesInfo })
+    .get('/users/nekch/repos')
+    .query({ per_page: UserRepositories.PER_PAGE, page: 1 })
+    .reply(200, [{ name: repoName, fork: false }])
+    .get('/repos/nekch/tui_test/branches')
+    .reply(200, [{ name: branchName, commit: { sha } }]);
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
-    const repoName = UserRepositoriesInfo[0].name;
-    const { name: branchName, commitSha: sha } = UserRepositoriesInfo[0].branches[0];
-
-    nock(Mocks.GIT_BASE_URL)
-      .get('/users/nekch')
-      .reply(200, { body: UserRepositoriesInfo })
-      .get('/users/')
-      .reply(404, { message: ResponseMessages.USER_NOT_FOUND })
-      .get('/users/nekch/repos')
-      .query({ per_page: UserRepositories.PER_PAGE, page: 1 })
-      .reply(200, [{ name: repoName, fork: false }])
-      .get('/repos/nekch/tui_test/branches')
-      .reply(200, [{ name: branchName, commit: { sha } }]);
 
     app = moduleFixture.createNestApplication();
     await app.init();
@@ -59,6 +58,10 @@ describe('e2e', () => {
     });
 
     it('should return error due to user don\'t send', () => {
+      nock(Mocks.GIT_BASE_URL)
+        .get('/users/')
+        .reply(404, { message: ResponseMessages.USER_NOT_FOUND })
+
       return request(app.getHttpServer())
         .get('/user-repositories')
         .accept(Mocks.ACCEPT_HEADER)
