@@ -16,7 +16,7 @@ const dataMultiplier = (data, repeats = 0) => {
   }
 
   return { data };
-}
+};
 
 const { name: branchName, commitSha: sha } = UserRepositoriesInfo[0].branches[0];
 
@@ -25,7 +25,7 @@ const getByUsername = jest.fn();
 const listBranches = jest.fn().mockImplementation(() => ({ data: [{ name: branchName, commit: { sha } }] }));
 
 jest.mock('@octokit/rest', () => {
-  let Octokit = class MockOctokit {
+  const Octokit = class MockOctokit {
     rest = {
       repos: {
         listForUser,
@@ -34,7 +34,7 @@ jest.mock('@octokit/rest', () => {
     };
 
     users = {
-      getByUsername,
+      getByUsername
     };
   };
 
@@ -43,7 +43,6 @@ jest.mock('@octokit/rest', () => {
 
 describe('TasksController', () => {
   let controller: UserRepositoriesController;
-  let octokitModule: OctokitModule;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -57,7 +56,6 @@ describe('TasksController', () => {
     }).compile();
 
     controller = module.get<UserRepositoriesController>(UserRepositoriesController);
-    octokitModule = module.get<OctokitModule>(OctokitModule);
   });
 
   describe('getUserRepos', () => {

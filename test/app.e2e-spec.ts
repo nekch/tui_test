@@ -60,7 +60,7 @@ describe('e2e', () => {
     it('should return error due to user don\'t send', () => {
       nock(Mocks.GIT_BASE_URL)
         .get('/users/')
-        .reply(404, { message: ResponseMessages.USER_NOT_FOUND })
+        .reply(404, { message: ResponseMessages.USER_NOT_FOUND });
 
       return request(app.getHttpServer())
         .get('/user-repositories')
